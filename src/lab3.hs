@@ -25,5 +25,5 @@ data Contract :: * -> * where
   DFun :: Contract a -> (a -> Contract b) -> Contract (a -> b)
 
 assert :: Contract a -> a -> a
-assert (Pred p)       x = if p x then x else error "contract violation"
-assert (DFun pre post) f =  assert post 1 . f . assert pre
+assert (Pred p)        x = if p x then x else error "contract violation"
+assert (DFun pre post) f =  \x -> assert (post x) (f (assert pre x)) 
