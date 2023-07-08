@@ -39,8 +39,21 @@ bExample = BApp bIdentity (BNum 3)
 --
 -- alphaEquiv :: Term -> Term -> Bool
 
-alphaEquiv :: Term -> Term -> Bool
-alphaEquiv =  
+map :: NamedTerm -> DeBruijnTerm
+map = go []
+  where
+    go env (NVar sym) = case findIndex (== sym) env of
+      Just ind -> BVar ind
+      Nothing -> error "unbound variable"
+
+    -- If we see a lambda, we add its variable to the environment.
+    go env (NLam sym exp) = BLam (go (sym : env) exp)
+
+    -- The other cases are straightforward.
+    go env (NApp e1 e2) = BApp (go env e1) (go env e2)
+
+-- alphaEquiv :: Term -> Term -> Bool
+-- alphaEquiv t1 t2 = map t1 == map t2
 
 -- * write a substitution function
 --

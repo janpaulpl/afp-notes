@@ -26,4 +26,9 @@ data Contract :: * -> * where
 
 assert :: Contract a -> a -> a
 assert (Pred p)        x = if p x then x else error "contract violation"
-assert (DFun pre post) f =  \x -> assert (post x) (f (assert pre x)) 
+assert (DFun pre post) f = \x -> assert (post x) (f (assert pre x)) 
+
+-- Exercise 0.3: Define a combinator that expresses the behavior of the old `Fun` constructor in terms of the new more general one.
+
+(==>) :: Contract a -> Contract b -> Contract (a -> b)
+(==>) (DFun pre post) f = \x -> (==>) (f (pre x))
